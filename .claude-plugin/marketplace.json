@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "owner-queue",
+  "description": "One queue for what your Claude Code sessions leave for you to do",
+  "owner": {
+    "name": "Yauhen Bichel"
+  },
+  "plugins": [
+    {
+      "name": "owner-queue",
+      "description": "Collect pull requests to review, sessions waiting for an answer, links and decisions from every session into one queue, and work through it one item at a time.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

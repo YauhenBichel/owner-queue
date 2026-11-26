@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "owner-queue"
+dynamic = ["version"]
+description = "One queue for what your Claude Code sessions leave for you: pull requests, waiting sessions, links and decisions"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "Yauhen Bichel" }]
+dependencies = []
+keywords = ["claude", "claude-code", "queue", "review", "pull-requests", "hooks", "ntfy"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development",
+]
+
+[project.scripts]
+owner-queue = "owner_queue.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/YauhenBichel/owner-queue"
+Changelog = "https://github.com/YauhenBichel/owner-queue/blob/main/CHANGELOG.md"
+Issues = "https://github.com/YauhenBichel/owner-queue/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "owner_queue.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py39"
