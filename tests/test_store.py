@@ -1,10 +1,9 @@
 import json
 import os
 import subprocess
-import sys
 import unittest
 
-from helpers import BIN, PR, Case, bash_done
+from helpers import CMD, PR, Case, bash_done
 
 from owner_queue import config, text
 from owner_queue.store import DONE, Queue, QueueError
@@ -306,7 +305,7 @@ class Concurrency(Case):
         return results
 
     def test_processes_adding_at_once_lose_and_duplicate_nothing(self):
-        commands = [([sys.executable, BIN, "add", f"note {i:02d}"], b"") for i in range(self.N)]
+        commands = [([*CMD, "add", f"note {i:02d}"], b"") for i in range(self.N)]
         results = self._together(commands)
         self.assertEqual([r[0] for r in results], [0] * self.N, results)
         items = self.items()
@@ -319,7 +318,7 @@ class Concurrency(Case):
 
     def test_hooks_reporting_the_same_pull_request_at_once_make_one_item(self):
         event = json.dumps(bash_done('gh pr create --title "Same"', PR + "5\n")).encode()
-        results = self._together([([sys.executable, BIN, "hook"], event) for _ in range(self.N)])
+        results = self._together([([*CMD, "hook"], event) for _ in range(self.N)])
         self.assertEqual([r[0] for r in results], [0] * self.N)
         self.assertEqual([i.url for i in self.items()], [PR + "5"])
         self.assertEqual(self.log().count('"op":"add"'), 1)
@@ -327,9 +326,9 @@ class Concurrency(Case):
     def test_hooks_and_commands_mixed(self):
         commands = []
         for i in range(self.N):
-            commands.append(([sys.executable, BIN, "add", f"note {i}"], b""))
+            commands.append(([*CMD, "add", f"note {i}"], b""))
             event = bash_done("gh pr create --fill", f"{PR}{100 + i}\n", session_id=f"session-{i}")
-            commands.append(([sys.executable, BIN, "hook"], json.dumps(event).encode()))
+            commands.append(([*CMD, "hook"], json.dumps(event).encode()))
         results = self._together(commands)
         self.assertEqual({r[0] for r in results}, {0})
         items = self.items()

@@ -56,11 +56,45 @@ From a clone, for one session only: `claude --plugin-dir /path/to/owner-queue`.
 
 While the plugin is enabled, the `owner-queue` command is available to Claude's
 Bash tool, which is what `/queue` uses. To use it in your own terminal and in
-the status line, put it on your `PATH` too:
+the status line, put it on your `PATH` too, in one of these ways:
 
 ```sh
+npm install -g owner-queue                       # needs Node 18 and Python 3.9 or later
+pipx install owner-queue                         # or: uv tool install owner-queue
+brew install YauhenBichel/tap/owner-queue
+# or, from a clone, with nothing installed:
 git clone https://github.com/YauhenBichel/owner-queue && cd owner-queue
 mkdir -p ~/.local/bin && ln -s "$PWD/bin/owner-queue" ~/.local/bin/owner-queue
+```
+
+The npm, PyPI and Homebrew packages exist from the first published release
+(see the repository's Releases page); before that, use the clone.
+
+What each package holds:
+
+| From | The `owner-queue` command | The plugin (hooks and `/queue`) |
+| --- | --- | --- |
+| the plugin marketplace (above) | for Claude's Bash tool only | yes |
+| npm | yes | the files are in the package; see below |
+| PyPI, Homebrew | yes | no |
+
+All of them run the same Python source and read the same queue, so it does not
+matter which one puts the command on your `PATH`. Keep them at the same
+version as the plugin. None of them has dependencies, runs a script at install
+time or downloads anything later. The npm package is the Python source and a
+small Node launcher that finds `python3` and runs it.
+
+The command by itself fills nothing: the queue is filled by the plugin's
+hooks. `npm install -g`, `pipx install` and `brew install` do not enable a
+plugin in Claude Code, so install the plugin as shown above as well.
+
+The npm package is a complete plugin folder, so a marketplace can also serve
+the plugin from npm instead of from git, with an
+[npm plugin source](https://code.claude.com/docs/en/plugins/marketplace-reference#npm-plugin-source)
+in its `marketplace.json`:
+
+```json
+{ "name": "owner-queue", "source": { "source": "npm", "package": "owner-queue", "version": "0.1.0" } }
 ```
 
 Uninstall:
@@ -68,6 +102,7 @@ Uninstall:
 ```sh
 claude plugin uninstall owner-queue@owner-queue
 claude plugin marketplace remove owner-queue
+npm uninstall -g owner-queue        # or: pipx uninstall owner-queue, brew uninstall owner-queue
 rm -rf ~/.claude/owner-queue        # the queue itself, if you want it gone
 ```
 
@@ -229,7 +264,8 @@ python3 -m unittest discover -s tests
 ```
 
 Tests use temporary directories, a fake `gh` and a fake ntfy server on a local
-port. See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
+port. `npm test` tests the Node launcher. See [CONTRIBUTING.md](CONTRIBUTING.md),
+[SECURITY.md](SECURITY.md) and, for releases, [RELEASING.md](RELEASING.md).
 
 ## License
 

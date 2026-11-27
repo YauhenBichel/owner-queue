@@ -26,6 +26,16 @@ class VersionsAgree(unittest.TestCase):
         self.assertIn('dynamic = ["version"]', text)
         self.assertIn('version = { attr = "owner_queue.__version__" }', text)
 
+    def test_package_json_matches_package(self):
+        package = json.loads((ROOT / "package.json").read_text())
+        self.assertEqual(package["version"], owner_queue.__version__)
+
+    def test_the_formula_does_not_name_a_version(self):
+        # Homebrew reads the version from the sdist URL, which the release fills in.
+        formula = (ROOT / "packaging/homebrew/owner-queue.rb").read_text()
+        self.assertNotRegex(formula, r'^\s*version "', "no version line")
+        self.assertIn("owner_queue-0.0.0.tar.gz", formula)
+
 
 if __name__ == "__main__":
     unittest.main()

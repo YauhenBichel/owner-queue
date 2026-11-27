@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_call:          # release.yml runs all of this before it publishes anything
 
 permissions:
   contents: read
@@ -33,3 +34,36 @@ jobs:
           done
       - name: Hook runs from the plugin entry point
         run: echo '{}' | OWNER_QUEUE_DIR="$RUNNER_TEMP/queue" python3 bin/owner-queue hook
+
+  package:
+    # What would be published: the npm tarball, the sdist and wheel, and the Homebrew formula.
+    # Nothing is published here; release.yml does that.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+      - name: The npm launcher
+        run: npm test
+      - name: The npm tarball holds only the intended files
+        run: python scripts/check_package.py npm
+      - name: Build sdist and wheel
+        run: uv build
+      - name: The sdist and wheel hold only the intended files
+        run: |
+          uvx twine check --strict dist/*
+          python scripts/check_package.py dist dist/*
+      - name: The wheel installs, its command runs, and the tests pass against it
+        run: |
+          uv venv "$RUNNER_TEMP/venv"
+          uv pip install --python "$RUNNER_TEMP/venv/bin/python" dist/*.whl
+          "$RUNNER_TEMP/venv/bin/owner-queue" --version
+          OWNER_QUEUE_TEST_INSTALLED=1 OWNER_QUEUE_TEST_DIST="$PWD/dist" "$RUNNER_TEMP/venv/bin/python" -m unittest discover -s tests
+      - name: The Homebrew formula renders from this sdist
+        run: |
+          sdist=$(ls "$PWD"/dist/owner_queue-*.tar.gz)
+          python scripts/render_formula.py --sdist "$sdist" --url "file://$sdist" -o "$RUNNER_TEMP/owner-queue.rb"
+          ruby -c "$RUNNER_TEMP/owner-queue.rb"

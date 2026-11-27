@@ -14,3 +14,6 @@ First version.
   the owner's own `gh`).
 - Optional phone notifications through ntfy: off until a topic file exists,
   batched, rate-limited, counts only by default.
+- Packaging for npm (the source and a small Node launcher), PyPI and Homebrew,
+  with checks of what each package would publish. Nothing is published until
+  the first release.

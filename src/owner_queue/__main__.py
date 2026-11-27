@@ -249,6 +249,21 @@ def _statusline(settings: dict) -> int:
 
 def main(argv: "list[str] | None" = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    try:
+        code = _main(argv)
+        sys.stdout.flush()
+        return code
+    except BrokenPipeError:
+        # The reader went away (`owner-queue list | head -1`). End quietly; point stdout at
+        # nothing so that Python does not complain when it closes it.
+        try:
+            os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        except (OSError, ValueError):
+            pass
+        return 0 if argv[:1] == ["hook"] else 141
+
+
+def _main(argv: "list[str]") -> int:
     cmd, args = (argv[0], argv[1:]) if argv else ("", [])
     if cmd == "hook":
         return _hook()

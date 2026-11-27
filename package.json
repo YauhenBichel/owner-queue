@@ -1,0 +1,39 @@
+{
+  "name": "owner-queue",
+  "version": "0.1.0",
+  "description": "One queue for what your Claude Code sessions leave for you: pull requests, waiting sessions, links and decisions. A Claude Code plugin and a command; needs Python 3.9 or later.",
+  "license": "MIT",
+  "author": "Yauhen Bichel",
+  "homepage": "https://github.com/YauhenBichel/owner-queue#readme",
+  "bugs": "https://github.com/YauhenBichel/owner-queue/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YauhenBichel/owner-queue.git"
+  },
+  "keywords": ["claude", "claude-code", "claude-code-plugin", "queue", "review", "pull-requests", "hooks", "ntfy"],
+  "bin": {
+    "owner-queue": "packaging/npm/bin/owner-queue.js"
+  },
+  "files": [
+    ".claude-plugin/plugin.json",
+    ".claude-plugin/marketplace.json",
+    "hooks/hooks.json",
+    "commands/queue.md",
+    "bin/owner-queue",
+    "src/owner_queue/*.py",
+    "src/owner_queue/handlers/*.py",
+    "packaging/npm/bin/owner-queue.js",
+    "CHANGELOG.md"
+  ],
+  "os": ["darwin", "linux"],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test packaging/npm/test/launcher.test.js"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

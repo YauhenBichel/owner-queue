@@ -1,9 +1,10 @@
 import json
 import os
 import re
+import subprocess
 import unittest
 
-from helpers import PR, ROOT, Case, bash_done, notification, stop
+from helpers import CMD, PR, ROOT, Case, bash_done, notification, stop
 
 from owner_queue import render
 from owner_queue.store import Queue
@@ -147,6 +148,17 @@ class Commands(Case):
         self.assertIn("owner-queue next", self.out("--help"))
         self.assertEqual(self.cli().returncode, 2)
         self.assertEqual(self.cli("frobnicate").returncode, 2)
+
+    def test_a_reader_that_stops_early_gets_no_traceback(self):
+        for i in range(300):
+            Queue(self.dir).add({"kind": "manual", "text": f"note {i} " + "x" * 300})
+        full = dict(self.env)
+        listing = subprocess.Popen([*CMD, "list"], env=full, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        listing.stdout.read(10)
+        listing.stdout.close()                # like `owner-queue list | head -c 10`
+        err = listing.stderr.read()
+        listing.stderr.close()
+        self.assertEqual((listing.wait(timeout=30), err), (141, b""))
 
     def test_compact_command(self):
         a = self.add("a")

@@ -1,0 +1,10 @@
+include CHANGELOG.md
+prune tests
+prune packaging
+prune scripts
+prune hooks
+prune commands
+prune bin
+prune .github
+prune .claude-plugin
+exclude package.json CONTRIBUTING.md SECURITY.md RELEASING.md .gitignore

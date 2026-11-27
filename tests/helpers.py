@@ -15,12 +15,19 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+
+# By default the tests run the source in this folder, the way the plugin does. With
+# OWNER_QUEUE_TEST_INSTALLED=1 they run the owner_queue installed in this Python instead:
+# that is how a built wheel is tested before a release (see RELEASING.md).
+INSTALLED = os.environ.get("OWNER_QUEUE_TEST_INSTALLED") == "1"
+if not INSTALLED:
+    sys.path.insert(0, str(ROOT / "src"))
 
 from owner_queue import config  # noqa: E402
 from owner_queue.store import Queue  # noqa: E402
 
 BIN = str(ROOT / "bin" / "owner-queue")
+CMD = [sys.executable, "-m", "owner_queue"] if INSTALLED else [sys.executable, BIN]
 PR = "https://github.com/example/repo/pull/"
 
 FAKE_GH = """#!/bin/sh
@@ -94,7 +101,7 @@ class Case(unittest.TestCase):
         full = dict(self.env)
         full.update(env or {})
         return subprocess.run(
-            [sys.executable, BIN, *args], input=stdin, env=full, timeout=timeout,
+            [*CMD, *args], input=stdin, env=full, timeout=timeout,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         )
 
