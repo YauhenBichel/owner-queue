@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 — 2026-11-28
+
+- `/queue list` asks `gh` which pull requests were merged or closed before it lists, as `/queue` already
+  did. Before, the list kept showing merged pull requests until the next `/queue`.
+- A title given as `--title \"…\"` (the command inside `bash -c "…"` or `ssh host "…"`) is read whole.
+  Before, the item's title was the first word with a stray `\"`.
+
 ## 0.1.0 — 2026-11-26
 
 First version.

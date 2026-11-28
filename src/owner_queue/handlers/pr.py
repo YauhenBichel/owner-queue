@@ -13,7 +13,11 @@ from ..store import Queue
 from . import Context
 
 _CREATE = re.compile(r"\bgh\b[^|;&\n]*?\bpr\s+(?:create|new)\b")
-_TITLE = re.compile(r"(?:--title|-t)(?:=|\s+)(?:\"((?:[^\"\\]|\\.)*)\"|'([^']*)'|(\S+))")
+# Title forms: \"escaped\" (the command sits inside bash -c "..." or ssh "..."), "double", 'single', bare.
+_TITLE = re.compile(
+    r"(?:--title|-t)(?:=|\s+)"
+    r"(?:\\\"((?:[^\"\\]|\\(?!\"))*)\\\"|\"((?:[^\"\\]|\\.)*)\"|'([^']*)'|(\S+))"
+)
 _ANNOUNCED = "Creating pull request for"
 _MAX_OUTPUT = 200_000
 
@@ -59,8 +63,8 @@ def _title(command: str) -> str:
     match = _TITLE.search(command)
     if not match:
         return ""
-    title = match.group(1) or match.group(2) or match.group(3) or ""
-    if match.group(1):
+    title = next((g for g in match.groups() if g), "")
+    if match.group(2):
         title = re.sub(r"\\(.)", r"\1", title)
     return text.field(title, config.MAX_TITLE)
 
