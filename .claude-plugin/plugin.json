@@ -1,6 +1,6 @@
 {
   "name": "owner-queue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "One queue for what your Claude Code sessions leave for you: pull requests to review, sessions waiting for an answer, links and decisions. Work through it one item at a time with /queue.",
   "author": {
     "name": "Yauhen Bichel"

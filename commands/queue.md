@@ -12,7 +12,7 @@ Run exactly the commands for that argument with the Bash tool, nothing else:
 - no argument: `owner-queue sync`, then `owner-queue next`
 - `done`: `owner-queue done`, then `owner-queue next`
 - `skip`: `owner-queue skip`, then `owner-queue next`
-- `list`: `owner-queue list`
+- `list`: `owner-queue sync`, then `owner-queue list`
 - `done <id>` or `skip <id>`: the same with that id, then `owner-queue next`
 
 `done` and `skip` without an id act on the item `owner-queue next` last showed. If a command prints an error, show the error and stop.

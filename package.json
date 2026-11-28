@@ -1,6 +1,6 @@
 {
   "name": "owner-queue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "One queue for what your Claude Code sessions leave for you: pull requests, waiting sessions, links and decisions. A Claude Code plugin and a command; needs Python 3.9 or later.",
   "license": "MIT",
   "author": "Yauhen Bichel",

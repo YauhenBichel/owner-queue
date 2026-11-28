@@ -43,6 +43,8 @@ class PullRequests(Case):
             ("cd /work/x && gh pr create -t 'Single quoted' -b x", 2, "Single quoted"),
             ("gh -R example/repo pr create --title=Equals", 3, "Equals"),
             ("git push -u origin feat && gh pr new --title \"After a push\"", 4, "After a push"),
+            ('bash -c "gh pr create --title \\"Add retry\\" --body x"', 5, "Add retry"),
+            ('ssh box "cd r && gh pr create -t \\"Inside ssh\\""', 6, "Inside ssh"),
         ]
         for command, number, title in forms:
             self.hook(bash_done(command, f"{PR}{number}\n"))
